@@ -3,7 +3,7 @@ import Post from '@/lib/models/Post';
 
 export const dynamic = 'force-dynamic';
 
-const BASE = (process.env.SITE_URL || 'http://localhost:3000').replace(/\/$/, '');
+const BASE = 'https://farrukh-photography.vercel.app';
 
 // XML-safe escaping — must run on every user-supplied string.
 function e(str) {
