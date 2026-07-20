@@ -1,0 +1,84 @@
+import Image from 'next/image';
+import Link from 'next/link';
+import { SITE } from '@/lib/site';
+import JsonLd from '@/components/JsonLd';
+
+export const metadata = {
+  title: `About ${SITE.name} — Automotive Photographer in ${SITE.city}`,
+  description: `${SITE.name} is an automotive photographer based in ${SITE.city}, ${SITE.country}, specializing in exotic and rare supercars.`,
+  alternates: { canonical: '/about' },
+};
+
+export default function About() {
+  const personLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    name: SITE.name,
+    jobTitle: 'Automotive Photographer',
+    description: SITE.description,
+    url: `${SITE.url}/about`,
+    email: `mailto:${SITE.email}`,
+    address: { '@type': 'PostalAddress', addressLocality: SITE.city, addressCountry: SITE.country },
+    knowsAbout: ['Automotive photography', 'Supercars', 'Exotic cars', 'Car photography'],
+    ...(SITE.instagramHandle && { sameAs: [`https://instagram.com/${SITE.instagramHandle}`] }),
+  };
+
+  return (
+    <>
+      <JsonLd data={personLd} />
+
+      <div className="page-title container">
+        <p className="eyebrow" style={{ marginBottom: 16 }}>About</p>
+        <h1>{SITE.name}</h1>
+      </div>
+
+      <div className="section container">
+        <div className="about-grid">
+          <div className="prose">
+            {/* TODO: Replace this placeholder copy with your real story. */}
+            <p>
+              I&apos;m an automotive photographer based in {SITE.city}, {SITE.country}. My work focuses
+              on the cars you rarely see on these roads — exotics, limited-run supercars and
+              rare classics — photographed with the care they deserve.
+            </p>
+            <p>
+              What started as chasing rare metal around {SITE.city} turned into a practiced craft:
+              scouting locations, working with owners, and shooting in the light that flatters a
+              car&apos;s lines instead of fighting them.
+            </p>
+
+            <h2>Equipment</h2>
+            <ul>
+              {/* TODO: List your real gear */}
+              <li>Camera body &amp; lens lineup — add your kit here</li>
+              <li>Lighting &amp; rigs — add here</li>
+              <li>Editing — add your workflow here</li>
+            </ul>
+
+            <h2>Work with me</h2>
+            <p>
+              Available for owner shoots, dealership and showroom work, automotive events and
+              editorial commissions — in {SITE.city} and across {SITE.country}.
+            </p>
+            <p>
+              <Link href="/contact" className="btn" style={{ marginTop: 8 }}>Get in touch</Link>
+            </p>
+          </div>
+
+          <div className="about-photo mr-10">
+            <div className="about-photo-frame mr-20 pr-10">
+              <Image
+                src="/profile.png"
+                alt={SITE.name}
+                width={600}
+                height={800}
+                style={{ width: '100%', height: 'auto', display: 'block' }}
+                priority
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}

@@ -1,0 +1,26 @@
+{
+  "name": "farrukhshahzad-photography",
+  "private": true,
+  "type": "module",
+  "description": "Automotive photography portfolio - Next.js 15 + MongoDB",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "seed": "node --env-file=.env.local scripts/seedAdmin.js"
+  },
+  "dependencies": {
+    "@tailwindcss/postcss": "^4.3.3",
+    "bcryptjs": "^2.4.3",
+    "cloudinary": "^2.5.1",
+    "isomorphic-dompurify": "^2.19.0",
+    "jose": "^5.9.6",
+    "marked": "^15.0.6",
+    "mongoose": "^8.9.5",
+    "next": "^15.1.6",
+    "postcss": "^8.5.20",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "tailwindcss": "^4.3.3"
+  }
+}

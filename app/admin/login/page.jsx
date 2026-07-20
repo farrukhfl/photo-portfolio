@@ -1,0 +1,10 @@
+import LoginForm from '@/components/admin/LoginForm';
+
+export const metadata = {
+  title: 'Admin Login',
+  robots: { index: false, follow: false },
+};
+
+export default function LoginPage() {
+  return <LoginForm />;
+}
