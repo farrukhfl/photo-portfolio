@@ -1,4 +1,5 @@
 import { Manrope } from 'next/font/google';
+import Script from 'next/script';
 import { SITE } from '@/lib/site';
 import './globals.css';
 
@@ -25,6 +26,20 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className={manrope.variable}>
+      <head>
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-00X9QECSTZ"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-00X9QECSTZ');
+          `}
+        </Script>
+      </head>
       <body>{children}</body>
     </html>
   );
