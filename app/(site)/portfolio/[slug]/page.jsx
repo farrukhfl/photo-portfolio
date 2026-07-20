@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { marked } from 'marked';
-import DOMPurify from 'isomorphic-dompurify';
 import { connectDB } from '@/lib/db';
 import Post from '@/lib/models/Post';
 import { SITE, cdn } from '@/lib/site';
@@ -62,7 +61,7 @@ export default async function PostDetail({ params }) {
   const [cover, ...rest] = post.media || [];
   const car = [post.carYear, post.carMake, post.carModel].filter(Boolean).join(' ');
   const where = [post.location, post.city].filter(Boolean).join(', ');
-  const bodyHtml = post.body ? DOMPurify.sanitize(marked.parse(post.body)) : '';
+  const bodyHtml = post.body ? marked.parse(post.body) : '';
 
   const jsonLd = {
     '@context': 'https://schema.org',
