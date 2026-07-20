@@ -65,17 +65,15 @@ export default function About() {
             </p>
           </div>
 
-          <div className="about-photo mr-10">
-            <div className="about-photo-frame mr-20 pr-10">
-              <Image
-                src="/profile.png"
-                alt={SITE.name}
-                width={600}
-                height={800}
-                style={{ width: '100%', height: 'auto', display: 'block' }}
-                priority
-              />
-            </div>
+          <div className="about-photo">
+            <Image
+              src="/about.jpg"
+              alt={`${SITE.name} with a Nissan GT-R`}
+              width={1080}
+              height={1080}
+              style={{ width: '100%', height: 'auto', display: 'block' }}
+              priority
+            />
           </div>
         </div>
       </div>

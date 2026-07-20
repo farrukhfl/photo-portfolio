@@ -328,6 +328,31 @@
     margin-top: 12px;
   }
 
+  /* ============ About ============ */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 480px;
+    gap: 64px;
+    align-items: start;
+  }
+  .about-photo {
+    position: sticky;
+    top: 88px; /* clears the nav */
+    overflow: hidden;
+  }
+  .about-photo img { width: 100%; display: block; }
+
+  @media (max-width: 900px) {
+    .about-grid {
+      grid-template-columns: 1fr;
+    }
+    .about-photo {
+      position: static;
+      order: -1; /* photo above text on mobile */
+      max-width: 480px;
+    }
+  }
+
   /* ============ Contact ============ */
   .contact-grid { display: grid; gap: 48px; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); padding: 24px 0 56px; }
   .contact-line { padding: 18px 0; border-bottom: 1px solid var(--line); }
