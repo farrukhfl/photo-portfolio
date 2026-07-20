@@ -9,6 +9,9 @@
     "start": "next start",
     "seed": "node --env-file=.env.local scripts/seedAdmin.js"
   },
+  "engines": {
+    "node": ">=20.19.0"
+  },
   "dependencies": {
     "@tailwindcss/postcss": "^4.3.3",
     "bcryptjs": "^2.4.3",
