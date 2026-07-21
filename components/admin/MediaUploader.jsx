@@ -24,7 +24,7 @@ export default function MediaUploader({ media, onChange }) {
     setError('');
     try {
       const items = await uploadFile(file);
-      onChange((prev) => [...(prev ?? media), ...items]);
+      onChange([...media, ...items]);
     } catch (err) {
       setError(`Upload failed: ${err.message}`);
     } finally {
@@ -46,7 +46,7 @@ export default function MediaUploader({ media, onChange }) {
     if (videos.length) {
       setBusy(true);
       Promise.all(videos.map(uploadFile))
-        .then((results) => onChange((prev) => [...(prev ?? media), ...results.flat()]))
+        .then((results) => onChange([...media, ...results.flat()]))
         .catch((err) => setError(`Upload failed: ${err.message}`))
         .finally(() => setBusy(false));
     }
