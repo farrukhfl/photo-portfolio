@@ -65,16 +65,22 @@ export default async function PostDetail({ params }) {
 
   const jsonLd = {
     '@context': 'https://schema.org',
-    '@type': 'ImageObject',
+    '@type': 'Photograph',
+    url: `${SITE.url}/portfolio/${post.slug}`,
     contentUrl: cover?.url,
+    thumbnailUrl: cover?.url ? cdn(cover.url, 'f_auto,q_auto,w_800') : undefined,
     name: post.title,
     description: post.metaDescription || undefined,
     keywords: [...(post.seoKeywords || []), ...(post.tags || [])].join(', ') || undefined,
     datePublished: post.publishedAt || undefined,
-    contentLocation: where || undefined,
+    dateModified: post.updatedAt || undefined,
+    contentLocation: where ? { '@type': 'Place', name: where } : undefined,
+    about: car ? { '@type': 'Car', name: car } : undefined,
     creator: { '@type': 'Person', name: SITE.name, url: SITE.url },
     creditText: `© ${SITE.name}`,
     copyrightNotice: `© ${SITE.name}`,
+    license: `${SITE.url}/about`,
+    acquireLicensePage: `${SITE.url}/contact`,
   };
 
   return (
