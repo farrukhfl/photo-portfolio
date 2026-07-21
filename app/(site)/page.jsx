@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { connectDB } from '@/lib/db';
 import Post from '@/lib/models/Post';
 import { SITE } from '@/lib/site';
@@ -32,12 +33,23 @@ export default async function Home() {
   return (
     <>
       <section className="hero container">
-        <p className="eyebrow">Automotive Photographer — {SITE.city}, {SITE.country}</p>
-        <h1>Exotic machines, photographed with intent.</h1>
-        <p>{SITE.description}</p>
-        <div className="hero-cta">
-          <Link href="/portfolio" className="btn">View Portfolio</Link>
-          <Link href="/contact" className="btn ghost">Book a Shoot</Link>
+        <div className="hero-content">
+          <p className="eyebrow">Automotive Photographer — {SITE.city}, {SITE.country}</p>
+          <h1>Exotic machines, photographed with intent.</h1>
+          <p>{SITE.description}</p>
+          <div className="hero-cta">
+            <Link href="/portfolio" className="btn">View Portfolio</Link>
+            <Link href="/contact" className="btn ghost">Book a Shoot</Link>
+          </div>
+        </div>
+        <div className="hero-image">
+          <Image
+            src="/header.jpg"
+            alt="Automotive photography"
+            fill
+            priority
+            style={{ objectFit: 'cover', objectPosition: 'center' }}
+          />
         </div>
       </section>
 

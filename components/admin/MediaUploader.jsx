@@ -3,33 +3,54 @@
 import { useState } from 'react';
 import { api } from '@/lib/clientApi';
 import { cdn } from '@/lib/site';
+import CropModal from './CropModal';
 
-/**
- * Drag-and-drop multi-file uploader. Files go straight to Cloudinary via the
- * API; each uploaded item then requires alt text before the post can be saved.
- */
 export default function MediaUploader({ media, onChange }) {
   const [drag, setDrag] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
+  const [cropQueue, setCropQueue] = useState([]); // File[] waiting to be cropped
 
-  async function uploadFiles(fileList) {
-    const files = [...fileList].filter(
-      (f) => f.type.startsWith('image/') || f.type.startsWith('video/')
-    );
-    if (!files.length) return;
+  async function uploadFile(file) {
+    const fd = new FormData();
+    fd.append('files', file);
+    const { media: uploaded } = await api.upload('/admin/upload', fd);
+    return uploaded.map((m) => ({ ...m, altText: '' }));
+  }
+
+  // Called after cropping/skipping one file — uploads it immediately.
+  async function processOne(file) {
     setBusy(true);
     setError('');
     try {
-      const fd = new FormData();
-      files.forEach((f) => fd.append('files', f));
-      const { media: uploaded } = await api.upload('/admin/upload', fd);
-      onChange([...media, ...uploaded.map((m) => ({ ...m, altText: '' }))]);
+      const items = await uploadFile(file);
+      onChange((prev) => [...(prev ?? media), ...items]);
     } catch (err) {
       setError(`Upload failed: ${err.message}`);
     } finally {
       setBusy(false);
     }
+    // advance the queue
+    setCropQueue((q) => q.slice(1));
+  }
+
+  function enqueue(fileList) {
+    const files = [...fileList].filter(
+      (f) => f.type.startsWith('image/') || f.type.startsWith('video/')
+    );
+    if (!files.length) return;
+    // Videos skip the crop step — go straight to upload
+    const images = files.filter((f) => f.type.startsWith('image/'));
+    const videos = files.filter((f) => f.type.startsWith('video/'));
+    // Upload videos immediately
+    if (videos.length) {
+      setBusy(true);
+      Promise.all(videos.map(uploadFile))
+        .then((results) => onChange((prev) => [...(prev ?? media), ...results.flat()]))
+        .catch((err) => setError(`Upload failed: ${err.message}`))
+        .finally(() => setBusy(false));
+    }
+    if (images.length) setCropQueue((q) => [...q, ...images]);
   }
 
   function setAlt(i, altText) {
@@ -44,10 +65,9 @@ export default function MediaUploader({ media, onChange }) {
     onChange(next);
   }
 
-  async function remove(i) {
+  function remove(i) {
     const item = media[i];
     onChange(media.filter((_, idx) => idx !== i));
-    // Best-effort cleanup in Cloudinary; the post no longer references it either way.
     api.post('/admin/upload/delete', { publicId: item.publicId, type: item.type }).catch(() => {});
   }
 
@@ -55,11 +75,12 @@ export default function MediaUploader({ media, onChange }) {
     <div className="field">
       <label>Media (first item is the cover) *</label>
       {error && <div className="form-error" style={{ marginBottom: 10 }}>{error}</div>}
+
       <label
         className={`dropzone ${drag ? 'drag' : ''}`}
         onDragOver={(e) => { e.preventDefault(); setDrag(true); }}
         onDragLeave={() => setDrag(false)}
-        onDrop={(e) => { e.preventDefault(); setDrag(false); uploadFiles(e.dataTransfer.files); }}
+        onDrop={(e) => { e.preventDefault(); setDrag(false); enqueue(e.dataTransfer.files); }}
       >
         {busy ? 'Uploading…' : 'Drag & drop images/videos here, or click to browse'}
         <input
@@ -67,9 +88,20 @@ export default function MediaUploader({ media, onChange }) {
           accept="image/*,video/*"
           multiple
           style={{ display: 'none' }}
-          onChange={(e) => { uploadFiles(e.target.files); e.target.value = ''; }}
+          onChange={(e) => { enqueue(e.target.files); e.target.value = ''; }}
         />
       </label>
+
+      {cropQueue.length > 0 && (
+        <CropModal
+          file={cropQueue[0]}
+          index={0}
+          total={cropQueue.length}
+          onDone={(cropped) => processOne(cropped)}
+          onSkip={() => processOne(cropQueue[0])}
+          onCancel={() => setCropQueue([])}
+        />
+      )}
 
       {media.length > 0 && (
         <div className="media-list">

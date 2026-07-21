@@ -77,7 +77,20 @@
   .nav-links a:hover, .nav-links a.active { color: var(--white); }
 
   /* ============ Hero ============ */
-  .hero { padding: clamp(80px, 14vh, 160px) 0 clamp(48px, 8vh, 96px); }
+  .hero {
+    padding: clamp(80px, 14vh, 160px) 0 clamp(48px, 8vh, 96px);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    align-items: center;
+  }
+  .hero-content { display: flex; flex-direction: column; }
+  .hero-image {
+    position: relative;
+    height: clamp(320px, 50vh, 600px);
+    border-radius: 8px;
+    overflow: hidden;
+  }
   .hero h1 {
     font-size: clamp(38px, 6vw, 76px);
     font-weight: 800;
@@ -86,6 +99,10 @@
   .hero p { margin-top: 24px; font-size: clamp(16px, 1.6vw, 19px); color: var(--muted); max-width: 52ch; }
   .hero .eyebrow { margin-bottom: 20px; }
   .hero-cta { margin-top: 40px; display: flex; gap: 16px; }
+  @media (max-width: 768px) {
+    .hero { grid-template-columns: 1fr; }
+    .hero-image { height: 260px; }
+  }
 
   .btn {
     display: inline-flex; align-items: center; gap: 8px;
@@ -228,6 +245,38 @@
     flex: 1; min-width: 140px; background: none; border: none;
     color: var(--text); font-family: inherit; font-size: 14px;
     padding: 5px 4px; outline: none;
+  }
+
+  /* Crop modal */
+  .crop-overlay {
+    position: fixed; inset: 0; z-index: 1000;
+    background: rgba(0,0,0,0.85); display: flex; align-items: center; justify-content: center;
+  }
+  .crop-modal {
+    background: var(--surface); width: min(680px, 96vw);
+    display: flex; flex-direction: column; gap: 0; overflow: hidden;
+  }
+  .crop-header {
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap;
+    gap: 10px; padding: 14px 16px; border-bottom: 1px solid var(--line);
+  }
+  .crop-title { font-size: 14px; font-weight: 600; color: var(--text); }
+  .crop-ratios { display: flex; gap: 6px; }
+  .crop-ratio-btn {
+    background: none; border: 1px solid var(--line); color: var(--muted);
+    padding: 4px 10px; font-size: 12px; cursor: pointer; transition: all 0.12s;
+  }
+  .crop-ratio-btn:hover { border-color: var(--faint); color: var(--text); }
+  .crop-ratio-btn.active { border-color: #fff; color: #fff; background: rgba(255,255,255,0.08); }
+  .crop-area { position: relative; height: 380px; background: #111; }
+  .crop-zoom {
+    display: flex; align-items: center; gap: 12px; padding: 10px 16px;
+    border-top: 1px solid var(--line); font-size: 12px; color: var(--muted);
+  }
+  .crop-zoom input[type=range] { flex: 1; accent-color: #fff; }
+  .crop-footer {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 16px; border-top: 1px solid var(--line); gap: 8px;
   }
 
   /* Dropzone */
