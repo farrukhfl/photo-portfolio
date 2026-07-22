@@ -59,6 +59,17 @@ export default function PostEditor({ id }) {
     setForm((f) => ({ ...f, title, slug: slugTouched ? f.slug : slugify(title) }));
   }
 
+  // Slug-based hint for Cloudinary public_id — use whatever is available at upload time.
+  const uploadHint = useMemo(() => {
+    if (form.slug) return form.slug;
+    return [form.carMake, form.carModel, form.carYear, form.city]
+      .filter(Boolean)
+      .join('-')
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-|-$/g, '');
+  }, [form.slug, form.carMake, form.carModel, form.carYear, form.city]);
+
   const suggestedMetaTitle = useMemo(() => {
     const car = [form.carMake, form.carModel].filter(Boolean).join(' ');
     const parts = [form.title || car, [car, form.city].filter(Boolean).join(' — ')].filter(Boolean);
@@ -134,7 +145,7 @@ export default function PostEditor({ id }) {
         {error && <div className="form-error">{error}</div>}
         {saved && <div className="form-ok">{saved}</div>}
 
-        <MediaUploader media={form.media} onChange={set('media')} />
+        <MediaUploader media={form.media} onChange={set('media')} hint={uploadHint} />
 
         <div className="field">
           <label htmlFor="title">Title *</label>

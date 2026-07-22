@@ -5,7 +5,7 @@ import { api } from '@/lib/clientApi';
 import { cdn } from '@/lib/site';
 import CropModal from './CropModal';
 
-export default function MediaUploader({ media, onChange }) {
+export default function MediaUploader({ media, onChange, hint = '' }) {
   const [drag, setDrag] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
@@ -14,6 +14,7 @@ export default function MediaUploader({ media, onChange }) {
   async function uploadFile(file) {
     const fd = new FormData();
     fd.append('files', file);
+    if (hint) fd.append('hint', hint);
     const { media: uploaded } = await api.upload('/admin/upload', fd);
     return uploaded.map((m) => ({ ...m, altText: '' }));
   }

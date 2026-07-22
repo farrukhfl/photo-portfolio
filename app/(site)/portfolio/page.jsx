@@ -23,6 +23,7 @@ export async function generateMetadata({ searchParams }) {
     title: { absolute: title },
     description,
     alternates: { canonical: '/portfolio' },
+    ...(filterLabel && { robots: { index: false, follow: false } }),
     openGraph: {
       title,
       description,

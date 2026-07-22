@@ -7,6 +7,9 @@ export default function robots() {
       allow: '/',
       disallow: ['/admin', '/api'],
     },
-    sitemap: 'https://farrukh-photography.vercel.app/sitemap.xml',
+    sitemap: [
+      `${SITE.url}/sitemap.xml`,
+      `${SITE.url}/image-sitemap.xml`,
+    ],
   };
 }

@@ -22,18 +22,27 @@ export async function generateMetadata({ params }) {
   if (!post) return { title: 'Not found' };
 
   const cover = post.media?.[0];
+
+  // "[Make] [Model] Photography in [City] | Farrukh Shahzad"
+  const carName = [post.carMake, post.carModel].filter(Boolean).join(' ');
+  const computedTitle = carName
+    ? `${carName} Photography${post.city ? ` in ${post.city}` : ''} | ${SITE.name}`
+    : `${post.title} | ${SITE.name}`;
+  const pageTitle = post.metaTitle || computedTitle;
+
   const ogCar = [post.carYear, post.carMake, post.carModel].filter(Boolean).join(' ');
   const ogAlt = cover?.altText ||
     (ogCar
       ? `${ogCar}${post.city ? ` photographed in ${post.city}, Pakistan` : ' automotive photography'}`
       : post.title);
+
   return {
-    title: { absolute: post.metaTitle || `${post.title} | ${SITE.title}` },
+    title: { absolute: pageTitle },
     description: post.metaDescription || SITE.description,
     keywords: [...(post.seoKeywords || []), ...(post.tags || [])],
     alternates: { canonical: `/portfolio/${post.slug}` },
     openGraph: {
-      title: post.metaTitle || post.title,
+      title: pageTitle,
       description: post.metaDescription || SITE.description,
       type: 'article',
       url: `/portfolio/${post.slug}`,
