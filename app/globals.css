@@ -144,8 +144,8 @@
   .section-head a:hover { color: var(--white); }
 
   /* ============ Masonry grid ============ */
-  .masonry { columns: 3 320px; column-gap: 20px; }
-  .masonry > * { break-inside: avoid; margin-bottom: 20px; }
+  .masonry { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; align-items: start; }
+  .masonry > * { margin-bottom: 0; }
 
   .card { position: relative; display: block; background: var(--surface); overflow: hidden; }
   .card img { width: 100%; transition: transform 0.6s ease, opacity 0.4s; opacity: 0.96; }
@@ -458,8 +458,7 @@
       letter-spacing: 0.08em;
     }
     .nav-links a:last-child { border-bottom: none; }
-    .masonry { columns: 2 160px; column-gap: 12px; }
-    .masonry > * { margin-bottom: 12px; }
+    .masonry { grid-template-columns: repeat(2, 1fr); gap: 12px; }
     .hero-cta { gap: 10px; }
     .section-head { flex-direction: column; align-items: flex-start; gap: 8px; }
     .post-gallery { grid-template-columns: 1fr; }
@@ -468,8 +467,7 @@
   @media (max-width: 480px) {
     .dash-grid-4 { grid-template-columns: 1fr; }
     .dash-grid-2 { grid-template-columns: 1fr; }
-    .masonry { columns: 1; }
-    .masonry > * { margin-bottom: 12px; }
+    .masonry { grid-template-columns: 1fr; }
     .btn { padding: 12px 20px; font-size: 12px; }
     .post-meta-bar { gap: 16px; }
   }
