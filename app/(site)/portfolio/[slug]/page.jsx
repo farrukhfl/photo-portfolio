@@ -96,7 +96,7 @@ export default async function PostDetail({ params }) {
         ) : null}
       </div>
 
-      <div className="container">
+      <div className="px-5 sm:px-8 lg:px-12 max-w-7xl mx-auto">
         <div className="page-title" style={{ paddingTop: 40 }}>
           <h1>{post.title}</h1>
         </div>

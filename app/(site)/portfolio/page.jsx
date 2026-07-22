@@ -72,12 +72,12 @@ export default async function Portfolio({ searchParams }) {
 
   return (
     <>
-      <div className="page-title container">
+      <div className="page-title px-5 sm:px-8 lg:px-12 max-w-7xl mx-auto">
         <h1>Portfolio</h1>
         <p>Every shoot, uploaded and catalogued. Filter by marque, city or tag.</p>
       </div>
 
-      <div className="section container">
+      <div className="section px-5 sm:px-8 lg:px-12 max-w-7xl mx-auto">
         <PortfolioFilters options={options} />
 
         {posts.length === 0 ? (

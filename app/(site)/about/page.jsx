@@ -27,15 +27,14 @@ export default function About() {
     <>
       <JsonLd data={personLd} />
 
-      <div className="page-title container">
+      <div className="page-title px-5 sm:px-8 lg:px-12 max-w-7xl mx-auto">
         <p className="eyebrow" style={{ marginBottom: 16 }}>About</p>
         <h1>{SITE.name}</h1>
       </div>
 
-      <div className="section container">
+      <div className="section px-5 sm:px-8 lg:px-12 max-w-7xl mx-auto">
         <div className="about-grid">
           <div className="prose">
-            {/* TODO: Replace this placeholder copy with your real story. */}
             <p>
               I&apos;m an automotive photographer based in {SITE.city}, {SITE.country}. My work focuses
               on the cars you rarely see on these roads — exotics, limited-run supercars and

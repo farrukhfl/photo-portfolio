@@ -5,7 +5,6 @@ import Post from '@/lib/models/Post';
 import { SITE } from '@/lib/site';
 import PostCard from '@/components/PostCard';
 
-// Always render fresh from the DB (also keeps builds from needing a live DB).
 export const dynamic = 'force-dynamic';
 
 async function getFeatured() {
@@ -32,7 +31,7 @@ export default async function Home() {
 
   return (
     <>
-      <section className="hero container">
+      <section className="hero px-5 sm:px-8 lg:px-12 max-w-7xl mx-auto">
         <div className="hero-content">
           <p className="eyebrow">Automotive Photographer — {SITE.city}, {SITE.country}</p>
           <h1>Exotic machines, photographed with intent.</h1>
@@ -44,7 +43,7 @@ export default async function Home() {
         </div>
         <div className="hero-image">
           <Image
-            src="/header.jpg"
+            src="/headers.jpg"
             alt="Automotive photography"
             fill
             priority
@@ -53,7 +52,7 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="section container">
+      <section className="section px-5 sm:px-8 lg:px-12 max-w-7xl mx-auto">
         <div className="section-head">
           <h2>Featured Work</h2>
           <Link href="/portfolio">All work →</Link>
@@ -67,7 +66,7 @@ export default async function Home() {
         )}
       </section>
 
-      <section className="section container">
+      <section className="section px-5 sm:px-8 lg:px-12 max-w-7xl mx-auto">
         <p className="eyebrow" style={{ marginBottom: 16 }}>About</p>
         <div className="prose">
           <p>
