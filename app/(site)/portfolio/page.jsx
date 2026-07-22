@@ -99,16 +99,21 @@ export default async function Portfolio({ searchParams }) {
     <>
       {portfolioPageLd && <JsonLd data={portfolioPageLd} />}
       <div className="page-title px-5 sm:px-8 lg:px-12 max-w-7xl mx-auto">
-        <h1>Portfolio</h1>
-        <p>Every shoot, uploaded and catalogued. Filter by marque, city or tag.</p>
+        <h1>Automotive Photography Portfolio</h1>
       </div>
 
       <div className="section px-5 sm:px-8 lg:px-12 max-w-7xl mx-auto">
         {!isFiltered && (
-          <p className="prose" style={{ marginBottom: 24, maxWidth: '72ch' }}>
-            Explore automotive photography from Karachi, Pakistan, featuring exotic cars, supercars,
-            luxury vehicles, and rare automobiles photographed across Pakistan&apos;s car culture.
-          </p>
+          <div className="prose" style={{ marginBottom: 32, maxWidth: '72ch' }}>
+            <p>
+              Explore automotive photography from Karachi, Pakistan, featuring exotic cars,
+              supercars, luxury SUVs, performance vehicles, and rare automobiles photographed
+              by {SITE.name}.
+            </p>
+            <p>
+              Every shoot is uploaded and catalogued. Filter by marque, city or tag below.
+            </p>
+          </div>
         )}
         <PortfolioFilters options={options} />
 
