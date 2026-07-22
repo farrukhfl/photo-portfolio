@@ -22,6 +22,11 @@ export async function generateMetadata({ params }) {
   if (!post) return { title: 'Not found' };
 
   const cover = post.media?.[0];
+  const ogCar = [post.carYear, post.carMake, post.carModel].filter(Boolean).join(' ');
+  const ogAlt = cover?.altText ||
+    (ogCar
+      ? `${ogCar}${post.city ? ` photographed in ${post.city}, Pakistan` : ' automotive photography'}`
+      : post.title);
   return {
     title: { absolute: post.metaTitle || `${post.title} | ${SITE.title}` },
     description: post.metaDescription || SITE.description,
@@ -32,7 +37,7 @@ export async function generateMetadata({ params }) {
       description: post.metaDescription || SITE.description,
       type: 'article',
       url: `/portfolio/${post.slug}`,
-      ...(cover?.type === 'image' && { images: [{ url: cover.url, alt: cover.altText }] }),
+      ...(cover?.type === 'image' && { images: [{ url: cover.url, alt: ogAlt }] }),
     },
     twitter: { card: cover?.type === 'image' ? 'summary_large_image' : 'summary' },
   };
@@ -61,26 +66,61 @@ export default async function PostDetail({ params }) {
   const [cover, ...rest] = post.media || [];
   const car = [post.carYear, post.carMake, post.carModel].filter(Boolean).join(' ');
   const where = [post.location, post.city].filter(Boolean).join(', ');
+  const altFallback = car
+    ? `${car}${post.city ? ` photographed in ${post.city}, Pakistan` : ' automotive photography'}`
+    : post.title;
   const bodyHtml = post.body ? marked.parse(post.body) : '';
 
-  const jsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'Photograph',
-    url: `${SITE.url}/portfolio/${post.slug}`,
-    contentUrl: cover?.url,
-    thumbnailUrl: cover?.url ? cdn(cover.url, 'f_auto,q_auto,w_800') : undefined,
-    name: post.title,
-    description: post.metaDescription || undefined,
-    keywords: [...(post.seoKeywords || []), ...(post.tags || [])].join(', ') || undefined,
-    datePublished: post.publishedAt || undefined,
-    dateModified: post.updatedAt || undefined,
-    contentLocation: where ? { '@type': 'Place', name: where } : undefined,
-    about: car ? { '@type': 'Car', name: car } : undefined,
+  const sharedImageProps = (m) => ({
+    '@type': 'ImageObject',
+    name: m.altText || altFallback,
+    description: m.altText || altFallback,
+    contentUrl: m.url,
+    thumbnailUrl: cdn(m.url, 'f_auto,q_auto,w_800'),
     creator: { '@type': 'Person', name: SITE.name, url: SITE.url },
+    ...(where && { locationCreated: { '@type': 'Place', name: where } }),
     creditText: `© ${SITE.name}`,
     copyrightNotice: `© ${SITE.name}`,
     license: `${SITE.url}/about`,
     acquireLicensePage: `${SITE.url}/contact`,
+  });
+
+  const imageObjects = (post.media || [])
+    .filter((m) => m.type === 'image')
+    .map(sharedImageProps);
+
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'WebPage',
+        '@id': `${SITE.url}/portfolio/${post.slug}`,
+        url: `${SITE.url}/portfolio/${post.slug}`,
+        name: post.title,
+        description: post.metaDescription || altFallback,
+        isPartOf: { '@id': `${SITE.url}/#website` },
+      },
+      {
+        '@type': 'Photograph',
+        url: `${SITE.url}/portfolio/${post.slug}`,
+        contentUrl: cover?.url,
+        thumbnailUrl: cover?.url ? cdn(cover.url, 'f_auto,q_auto,w_800') : undefined,
+        name: post.title,
+        description: post.metaDescription || undefined,
+        keywords: [...(post.seoKeywords || []), ...(post.tags || [])].join(', ') || undefined,
+        datePublished: post.publishedAt || undefined,
+        dateModified: post.updatedAt || undefined,
+        contentLocation: where ? { '@type': 'Place', name: where } : undefined,
+        locationCreated: where ? { '@type': 'Place', name: where } : undefined,
+        about: car ? { '@type': 'Car', name: car } : undefined,
+        creator: { '@type': 'Person', name: SITE.name, url: SITE.url },
+        creditText: `© ${SITE.name}`,
+        copyrightNotice: `© ${SITE.name}`,
+        license: `${SITE.url}/about`,
+        acquireLicensePage: `${SITE.url}/contact`,
+      },
+      ...imageObjects,
+    ],
   };
 
   return (
@@ -90,9 +130,9 @@ export default async function PostDetail({ params }) {
 
       <div className="post-hero">
         {cover?.type === 'video' ? (
-          <video src={cover.url} controls autoPlay muted loop playsInline aria-label={cover.altText} />
+          <video src={cover.url} controls autoPlay muted loop playsInline aria-label={cover.altText || altFallback} />
         ) : cover ? (
-          <img src={cdn(cover.url, 'f_auto,q_auto,w_2000')} alt={cover.altText} />
+          <img src={cdn(cover.url, 'f_auto,q_auto,w_2000')} alt={cover.altText || altFallback} />
         ) : null}
       </div>
 
@@ -120,9 +160,9 @@ export default async function PostDetail({ params }) {
           <div className="post-gallery">
             {rest.map((m) =>
               m.type === 'video' ? (
-                <video key={m.publicId} src={m.url} controls muted playsInline aria-label={m.altText} />
+                <video key={m.publicId} src={m.url} controls muted playsInline aria-label={m.altText || altFallback} />
               ) : (
-                <img key={m.publicId} src={cdn(m.url, 'f_auto,q_auto,w_1800')} alt={m.altText} loading="lazy" />
+                <img key={m.publicId} src={cdn(m.url, 'f_auto,q_auto,w_1800')} alt={m.altText || altFallback} loading="lazy" />
               )
             )}
           </div>

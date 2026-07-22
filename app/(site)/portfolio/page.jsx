@@ -3,6 +3,8 @@ import { connectDB } from '@/lib/db';
 import Post from '@/lib/models/Post';
 import PostCard from '@/components/PostCard';
 import PortfolioFilters from '@/components/PortfolioFilters';
+import JsonLd from '@/components/JsonLd';
+import { SITE } from '@/lib/site';
 
 export const dynamic = 'force-dynamic';
 
@@ -11,10 +13,22 @@ const PER_PAGE = 24;
 export async function generateMetadata({ searchParams }) {
   const { make, city, tag } = await searchParams;
   const filterLabel = [make, city, tag].filter(Boolean).join(' · ');
+  const title = filterLabel
+    ? `${filterLabel} — Portfolio | Farrukh Shahzad`
+    : 'Automotive Photography Portfolio | Cars in Karachi | Farrukh Shahzad';
+  const description = filterLabel
+    ? `Automotive photography filtered by ${filterLabel} — by Farrukh Shahzad, Karachi, Pakistan.`
+    : 'Explore Farrukh Shahzad\'s automotive photography portfolio featuring Ferrari, Porsche, Mercedes-Benz, Nissan, Toyota and other rare cars photographed in Karachi, Pakistan.';
   return {
-    title: filterLabel ? `${filterLabel} — Portfolio` : 'Portfolio — Automotive Photography',
-    description: `Portfolio of exotic and rare supercar photography${filterLabel ? ` — ${filterLabel}` : ''} by Farrukh Shahzad, Karachi, Pakistan.`,
+    title: { absolute: title },
+    description,
     alternates: { canonical: '/portfolio' },
+    openGraph: {
+      title,
+      description,
+      url: `${SITE.url}/portfolio`,
+      type: 'website',
+    },
   };
 }
 
@@ -63,6 +77,7 @@ async function getData(searchParams) {
 export default async function Portfolio({ searchParams }) {
   const sp = await searchParams;
   const { posts, page, pages, options } = await getData(sp);
+  const isFiltered = !!(sp.make || sp.city || sp.tag);
 
   function pageHref(n) {
     const next = new URLSearchParams(sp);
@@ -70,14 +85,31 @@ export default async function Portfolio({ searchParams }) {
     return `/portfolio?${next}`;
   }
 
+  const portfolioPageLd = !isFiltered ? {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    '@id': `${SITE.url}/portfolio`,
+    url: `${SITE.url}/portfolio`,
+    name: 'Automotive Photography Portfolio | Cars in Karachi | Farrukh Shahzad',
+    description: 'Explore Farrukh Shahzad\'s automotive photography portfolio featuring Ferrari, Porsche, Mercedes-Benz, Nissan, Toyota and other rare cars photographed in Karachi, Pakistan.',
+    isPartOf: { '@id': `${SITE.url}/#website` },
+  } : null;
+
   return (
     <>
+      {portfolioPageLd && <JsonLd data={portfolioPageLd} />}
       <div className="page-title px-5 sm:px-8 lg:px-12 max-w-7xl mx-auto">
         <h1>Portfolio</h1>
         <p>Every shoot, uploaded and catalogued. Filter by marque, city or tag.</p>
       </div>
 
       <div className="section px-5 sm:px-8 lg:px-12 max-w-7xl mx-auto">
+        {!isFiltered && (
+          <p className="prose" style={{ marginBottom: 24, maxWidth: '72ch' }}>
+            Explore automotive photography from Karachi, Pakistan, featuring exotic cars, supercars,
+            luxury vehicles, and rare automobiles photographed across Pakistan&apos;s car culture.
+          </p>
+        )}
         <PortfolioFilters options={options} />
 
         {posts.length === 0 ? (

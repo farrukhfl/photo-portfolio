@@ -4,8 +4,23 @@ import { connectDB } from '@/lib/db';
 import Post from '@/lib/models/Post';
 import { SITE } from '@/lib/site';
 import PostCard from '@/components/PostCard';
+import JsonLd from '@/components/JsonLd';
 
 export const dynamic = 'force-dynamic';
+
+export const metadata = {
+  title: { absolute: 'Automotive Photographer in Karachi | Farrukh Shahzad' },
+  description:
+    'Farrukh Shahzad is an automotive photographer in Karachi, Pakistan, capturing exotic cars, supercars, luxury vehicles, and Pakistan\'s unique car culture.',
+  alternates: { canonical: '/' },
+  openGraph: {
+    title: 'Automotive Photographer in Karachi | Farrukh Shahzad',
+    description:
+      'Farrukh Shahzad is an automotive photographer in Karachi, Pakistan, capturing exotic cars, supercars, luxury vehicles, and Pakistan\'s unique car culture.',
+    url: SITE.url,
+    type: 'website',
+  },
+};
 
 async function getFeatured() {
   try {
@@ -26,11 +41,52 @@ async function getFeatured() {
   }
 }
 
+const websiteLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'WebSite',
+      '@id': `${SITE.url}/#website`,
+      name: SITE.siteName,
+      url: SITE.url,
+      description: metadata.description,
+      author: { '@id': `${SITE.url}/#person` },
+    },
+    {
+      '@type': 'WebPage',
+      '@id': `${SITE.url}/`,
+      url: SITE.url,
+      name: metadata.title,
+      description: metadata.description,
+      isPartOf: { '@id': `${SITE.url}/#website` },
+      about: { '@id': `${SITE.url}/#person` },
+    },
+    {
+      '@type': 'Person',
+      '@id': `${SITE.url}/#person`,
+      name: SITE.name,
+      jobTitle: 'Automotive Photographer',
+      url: SITE.url,
+      email: SITE.email,
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: SITE.city,
+        addressCountry: SITE.country,
+      },
+      knowsAbout: ['Automotive photography', 'Supercar photography', 'Exotic cars', 'Car photography', 'Luxury vehicles'],
+      ...(SITE.instagramHandle && {
+        sameAs: [`https://instagram.com/${SITE.instagramHandle}`],
+      }),
+    },
+  ],
+};
+
 export default async function Home() {
   const featured = await getFeatured();
 
   return (
     <>
+      <JsonLd data={websiteLd} />
       <section className="hero px-5 sm:px-8 lg:px-12 max-w-7xl mx-auto">
         <div className="hero-content">
           <p className="eyebrow">Automotive Photographer — {SITE.city}, {SITE.country}</p>
@@ -44,7 +100,7 @@ export default async function Home() {
         <div className="hero-image">
           <Image
             src="/headers.jpg"
-            alt="Automotive photography"
+            alt="Automotive photography by Farrukh Shahzad in Karachi, Pakistan"
             fill
             priority
             style={{ objectFit: 'cover', objectPosition: 'center' }}

@@ -18,8 +18,20 @@ export const metadata = {
   },
   description: SITE.description,
   openGraph: {
-    siteName: SITE.title,
+    siteName: SITE.siteName,
     type: 'website',
+    images: [
+      {
+        url: '/headers.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'Automotive photography by Farrukh Shahzad in Karachi, Pakistan',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    images: ['/headers.jpg'],
   },
 };
 
